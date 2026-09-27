@@ -1,0 +1,726 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nền Tảng Vượt Link & Quản Lý Rút Tiền</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+    body { font-family: 'Inter', sans-serif; }
+  </style>
+</head>
+<body class="bg-slate-900 text-slate-100 min-h-screen flex flex-col">
+
+  <!-- NAVIGATION BAR -->
+  <nav class="bg-slate-800/90 border-b border-slate-700 backdrop-blur-md sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-16">
+        <div class="flex items-center space-x-3 cursor-pointer" onclick="showSection('home')">
+          <div class="bg-indigo-600 p-2 rounded-lg text-white">
+            <i class="fa-solid fa-link text-xl"></i>
+          </div>
+          <span class="font-bold text-xl tracking-wider text-white">LINK<span class="text-indigo-400">PRO</span></span>
+        </div>
+
+        <div class="flex items-center space-x-4" id="nav-links">
+          <!-- Rendered dynamically -->
+        </div>
+
+        <div class="flex items-center space-x-3" id="auth-buttons">
+          <!-- Rendered dynamically -->
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- MAIN CONTENT AREA -->
+  <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
+
+    <!-- NOTIFICATION SYSTEM -->
+    <div id="toast" class="hidden fixed bottom-5 right-5 z-50 px-6 py-4 rounded-xl shadow-2xl text-white font-medium transition-all duration-300"></div>
+
+    <!-- 1. HOME SECTION -->
+    <section id="sec-home" class="space-y-12">
+      <div class="text-center space-y-6 py-12">
+        <span class="px-4 py-1.5 rounded-full text-xs font-semibold bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 uppercase tracking-widest">
+          Hệ thống nhiệm vụ & Rút tiền tự động
+        </span>
+        <h1 class="text-4xl sm:text-6xl font-extrabold text-white tracking-tight">
+          Vượt Link Kiếm Tiền <br><span class="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-cyan-400">Minh Bạch & An Toàn</span>
+        </h1>
+        <p class="max-w-2xl mx-auto text-lg text-slate-400">
+          Hoàn thành nhiệm vụ vượt link đếm ngược để nhận thưởng. Lưu ý nghiêm cấm các hành vi gian lận chưa xong nhiệm vụ đã bấm nhận thưởng.
+        </p>
+        <div class="flex justify-center gap-4" id="home-cta">
+          <!-- CTA buttons rendered by JS -->
+        </div>
+      </div>
+    </section>
+
+    <!-- 2. REGISTER SECTION -->
+    <section id="sec-register" class="hidden max-w-md mx-auto">
+      <div class="bg-slate-800/80 border border-slate-700 p-8 rounded-2xl shadow-xl">
+        <h2 class="text-2xl font-bold text-white mb-6 text-center">Đăng Ký Tài Khoản</h2>
+        <form onsubmit="handleRegister(event)" class="space-y-4">
+          <div>
+            <label class="block text-sm font-medium text-slate-300 mb-1">Tên đăng nhập (Username)</label>
+            <input type="text" id="reg-username" required class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-white focus:outline-none focus:border-indigo-500" placeholder="Nhập tên tài khoản...">
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-slate-300 mb-1">Mật khẩu</label>
+            <input type="password" id="reg-password" required class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-white focus:outline-none focus:border-indigo-500" placeholder="••••••••">
+          </div>
+          <button type="submit" class="w-full py-3 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl transition-all shadow-lg shadow-indigo-600/30">
+            Tạo Tài Khoản
+          </button>
+        </form>
+        <p class="text-center text-sm text-slate-400 mt-6">
+          Đã có tài khoản? <a href="#" onclick="showSection('login')" class="text-indigo-400 hover:underline">Đăng nhập ngay</a>
+        </p>
+      </div>
+    </section>
+
+    <!-- 3. LOGIN SECTION -->
+    <section id="sec-login" class="hidden max-w-md mx-auto">
+      <div class="bg-slate-800/80 border border-slate-700 p-8 rounded-2xl shadow-xl">
+        <h2 class="text-2xl font-bold text-white mb-6 text-center">Đăng Nhập</h2>
+        <form onsubmit="handleLogin(event)" class="space-y-4">
+          <div>
+            <label class="block text-sm font-medium text-slate-300 mb-1">Tên đăng nhập</label>
+            <input type="text" id="login-username" required class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-white focus:outline-none focus:border-indigo-500" placeholder="Tên tài khoản...">
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-slate-300 mb-1">Mật khẩu</label>
+            <input type="password" id="login-password" required class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-white focus:outline-none focus:border-indigo-500" placeholder="••••••••">
+          </div>
+          <button type="submit" class="w-full py-3 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl transition-all shadow-lg shadow-indigo-600/30">
+            Đăng Nhập
+          </button>
+        </form>
+        <p class="text-center text-sm text-slate-400 mt-6">
+          Chưa có tài khoản? <a href="#" onclick="showSection('register')" class="text-indigo-400 hover:underline">Đăng ký ngay</a>
+        </p>
+      </div>
+    </section>
+
+    <!-- 4. BANNED SECTION (KHI TÀI KHOẢN BỊ KHÓA) -->
+    <section id="sec-banned" class="hidden max-w-lg mx-auto text-center space-y-6">
+      <div class="bg-rose-950/40 border border-rose-600/50 p-8 rounded-2xl shadow-2xl">
+        <div class="w-16 h-16 bg-rose-600/20 text-rose-500 rounded-full flex items-center justify-center text-3xl mx-auto mb-4">
+          <i class="fa-solid fa-user-slash"></i>
+        </div>
+        <h2 class="text-2xl font-extrabold text-rose-400">TÀI KHOẢN ĐÃ BỊ KHÓA (BANNED)</h2>
+        <p class="text-slate-300 text-sm leading-relaxed">
+          Phát hiện vi phạm quy định: <strong class="text-rose-400">Cố tình bấm nhận thưởng gian lận khi chưa hoàn thành nhiệm vụ đếm ngược.</strong>
+        </p>
+        <div class="p-4 bg-slate-900/80 rounded-xl border border-rose-900 text-xs text-slate-400">
+          Mọi chức năng kiếm tiền và rút tiền của tài khoản này đã bị vô hiệu hóa vĩnh viễn.
+        </div>
+      </div>
+    </section>
+
+    <!-- 5. USER DASHBOARD & TASKS -->
+    <section id="sec-dashboard" class="hidden space-y-8">
+      <div class="bg-gradient-to-r from-indigo-900/40 to-slate-800 p-6 rounded-2xl border border-indigo-500/20 flex flex-wrap items-center justify-between gap-4">
+        <div>
+          <h2 class="text-2xl font-bold text-white">Xin chào, <span id="dash-user-name" class="text-indigo-400">User</span>!</h2>
+          <p class="text-slate-400 text-sm">Hoàn thành nhiệm vụ vượt link để tích lũy số dư.</p>
+        </div>
+        <div class="flex items-center gap-6">
+          <div class="text-right">
+            <span class="text-xs text-slate-400 block uppercase font-medium">Số dư hiện tại</span>
+            <span class="text-3xl font-extrabold text-emerald-400" id="dash-balance">$0.000</span>
+          </div>
+          <button onclick="showSection('withdraw')" class="px-5 py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-xl transition-all shadow-lg shadow-emerald-600/20">
+            <i class="fa-solid fa-wallet me-2"></i>Rút tiền
+          </button>
+        </div>
+      </div>
+
+      <!-- TASK AREA -->
+      <div class="bg-slate-800/80 p-8 rounded-2xl border border-slate-700 text-center space-y-6">
+        <div class="inline-block p-4 bg-indigo-500/10 rounded-full text-indigo-400 text-3xl">
+          <i class="fa-solid fa-stopwatch"></i>
+        </div>
+        <h3 class="text-2xl font-bold text-white">Nhiệm Vụ Vượt Link Đếm Ngược (15 Giây)</h3>
+        <p class="text-slate-400 text-sm max-w-lg mx-auto">
+          Nhấn bắt đầu và đợi thời gian chạy hết 15 giây để nhận thưởng <strong class="text-emerald-400">$0.50</strong>.
+          <span class="text-rose-400 font-bold block mt-1">CẢNH BÁO: Cố tình gian lận bấm nhận thưởng trước thời gian sẽ bị BANNED khóa tài khoản ngay lập tức!</span>
+        </p>
+
+        <!-- Timer Counter -->
+        <div class="p-6 bg-slate-900/80 rounded-xl border border-slate-700 max-w-sm mx-auto">
+          <div class="text-5xl font-extrabold text-indigo-400 font-mono" id="task-timer">15</div>
+          <p class="text-xs text-slate-500 mt-2" id="task-status-text">Chưa bắt đầu nhiệm vụ</p>
+        </div>
+
+        <div class="flex flex-wrap justify-center gap-4">
+          <button id="btn-start-task" onclick="startTaskTimer()" class="px-6 py-3 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl transition-all">
+            <i class="fa-solid fa-play me-2"></i>Bắt Đầu Nhiệm Vụ
+          </button>
+         
+          <button id="btn-claim-task" onclick="attemptClaimReward()" class="px-6 py-3 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-xl transition-all">
+            <i class="fa-solid fa-gift me-2"></i>Xác Nhận Nhận Thưởng
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- 6. WITHDRAW SECTION -->
+    <section id="sec-withdraw" class="hidden max-w-2xl mx-auto space-y-6">
+      <div class="bg-slate-800/80 p-6 rounded-2xl border border-slate-700">
+        <h2 class="text-xl font-bold text-white mb-4">Yêu Cầu Rút Tiền</h2>
+        <form onsubmit="handleRequestWithdraw(event)" class="space-y-4">
+          <div>
+            <label class="block text-sm font-medium text-slate-300 mb-1">Phương thức thanh toán</label>
+            <select id="wd-method" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-white focus:outline-none focus:border-indigo-500">
+              <option value="Momo">Ví MoMo</option>
+              <option value="Bank">Ngân Hàng (Banking)</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-slate-300 mb-1">Số tài khoản / SĐT nhận tiền</label>
+            <input type="text" id="wd-account" required placeholder="Nhập số tài khoản hoặc SĐT MoMo..." class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-white focus:outline-none focus:border-indigo-500">
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-slate-300 mb-1">Số tiền rút ($)</label>
+            <input type="number" step="0.01" min="0.5" id="wd-amount" required placeholder="Tối thiểu $0.50" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-white focus:outline-none focus:border-indigo-500">
+          </div>
+          <button type="submit" class="w-full py-3 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-xl transition-all shadow-lg shadow-emerald-600/20">
+            Gửi Yêu Cầu Rút Tiền
+          </button>
+        </form>
+      </div>
+
+      <!-- Withdraw History -->
+      <div class="bg-slate-800/80 rounded-2xl border border-slate-700 overflow-hidden">
+        <div class="p-5 border-b border-slate-700">
+          <h3 class="text-lg font-bold text-white">Lịch Sử Rút Tiền</h3>
+        </div>
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-sm">
+            <thead class="bg-slate-900/50 text-slate-400 uppercase text-xs">
+              <tr>
+                <th class="p-4">Thời Gian</th>
+                <th class="p-4">Phương Thức</th>
+                <th class="p-4">Số Tiền</th>
+                <th class="p-4">Trạng Thái</th>
+              </tr>
+            </thead>
+            <tbody id="withdraw-history-table" class="divide-y divide-slate-700/50">
+              <!-- Rendered dynamically -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- 7. ADMIN PANEL (LƯƠNG8888 ONLY) -->
+    <section id="sec-admin" class="hidden space-y-6">
+      <div class="bg-amber-500/10 border border-amber-500/20 p-6 rounded-2xl flex items-center justify-between">
+        <div>
+          <h2 class="text-2xl font-bold text-amber-400">Trang Quản Trị Duyệt Tiền (Admin)</h2>
+          <p class="text-slate-400 text-sm">Tài khoản Quản trị viên: <strong class="text-white">luong8888</strong></p>
+        </div>
+        <span class="px-3 py-1 bg-amber-500/20 text-amber-300 font-bold text-xs rounded-full border border-amber-500/30 uppercase">
+          Quyền Admin
+        </span>
+      </div>
+
+      <!-- Withdraw Approvals Only -->
+      <div class="bg-slate-800/80 rounded-2xl border border-slate-700 overflow-hidden shadow-xl">
+        <div class="p-5 border-b border-slate-700">
+          <h3 class="text-lg font-bold text-white">Danh Sách Đơn Rút Tiền Cần Xử Lý</h3>
+        </div>
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-sm">
+            <thead class="bg-slate-900/50 text-slate-400 uppercase text-xs">
+              <tr>
+                <th class="p-4">Tài Khoản</th>
+                <th class="p-4">Phương Thức</th>
+                <th class="p-4">STK / Số Điện Thoại</th>
+                <th class="p-4">Số Tiền</th>
+                <th class="p-4">Trạng Thái</th>
+                <th class="p-4 text-center">Thao Tác Duyệt</th>
+              </tr>
+            </thead>
+            <tbody id="admin-withdraw-table" class="divide-y divide-slate-700/50">
+              <!-- Pending withdraw requests rendered dynamically -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="bg-slate-950 border-t border-slate-800 py-6 text-center text-xs text-slate-500 mt-auto">
+    <p>© 2026 LINKPRO Monetize Platform. Hệ thống vận hành và duyệt tiền bảo mật.</p>
+  </footer>
+
+  <!-- JAVASCRIPT SYSTEM LOGIC -->
+  <script>
+    // --- LOCAL STORAGE DATABASE MANAGER ---
+    const DB = {
+      getUsers: () => JSON.parse(localStorage.getItem('lp_users')) || [],
+      saveUsers: (users) => localStorage.setItem('lp_users', JSON.stringify(users)),
+     
+      getWithdraws: () => JSON.parse(localStorage.getItem('lp_withdraws')) || [],
+      saveWithdraws: (wd) => localStorage.setItem('lp_withdraws', JSON.stringify(wd)),
+
+      getCurrentUser: () => JSON.parse(localStorage.getItem('lp_current_user')) || null,
+      setCurrentUser: (user) => localStorage.setItem('lp_current_user', JSON.stringify(user))
+    };
+
+    // Global task state
+    let taskTimerInterval = null;
+    let taskTimeRemaining = 15;
+    let isTaskRunning = false;
+    let isTaskCompleted = false;
+
+    // --- AUTO LOGIN & INITIALIZATION ---
+    function initApp() {
+      const currentUser = DB.getCurrentUser();
+     
+      // Auto-login persistence check
+      if (currentUser) {
+        const users = DB.getUsers();
+        const freshUser = users.find(u => u.username === currentUser.username);
+       
+        if (freshUser && freshUser.isBanned) {
+          showSection('banned');
+        } else if (currentUser.username === 'luong8888') {
+          showSection('admin');
+        } else {
+          showSection('dashboard');
+        }
+      } else {
+        showSection('home');
+      }
+      renderNav();
+    }
+
+    // --- NAVIGATION CONTROLLER ---
+    function showSection(secId) {
+      const currentUser = DB.getCurrentUser();
+      const users = DB.getUsers();
+      const freshUser = currentUser ? users.find(u => u.username === currentUser.username) : null;
+
+      // Prevent banned users from navigating
+      if (freshUser && freshUser.isBanned && secId !== 'banned') {
+        secId = 'banned';
+      }
+
+      const sections = ['home', 'register', 'login', 'dashboard', 'withdraw', 'admin', 'banned'];
+      sections.forEach(id => {
+        const el = document.getElementById(`sec-${id}`);
+        if (el) el.classList.add('hidden');
+      });
+
+      const target = document.getElementById(`sec-${secId}`);
+      if (target) target.classList.remove('hidden');
+
+      // Refresh page content on view
+      if (secId === 'dashboard') renderDashboard();
+      if (secId === 'withdraw') renderWithdraw();
+      if (secId === 'admin') renderAdmin();
+      renderHomeCTA();
+    }
+
+    function renderHomeCTA() {
+      const currentUser = DB.getCurrentUser();
+      const ctaBox = document.getElementById('home-cta');
+     
+      if (currentUser) {
+        if (currentUser.username === 'luong8888') {
+          ctaBox.innerHTML = `
+            <button onclick="showSection('admin')" class="px-8 py-3.5 rounded-xl font-bold bg-amber-600 hover:bg-amber-500 text-white shadow-lg shadow-amber-600/30 transition-all">
+              Vào Trang Duyệt Tiền Admin
+            </button>
+          `;
+        } else {
+          ctaBox.innerHTML = `
+            <button onclick="showSection('dashboard')" class="px-8 py-3.5 rounded-xl font-bold bg-indigo-600 hover:bg-indigo-500 text-white shadow-lg shadow-indigo-600/30 transition-all">
+              Vào Trang Nhiệm Vụ Kiếm Tiền
+            </button>
+          `;
+        }
+      } else {
+        ctaBox.innerHTML = `
+          <button onclick="showSection('register')" class="px-8 py-3.5 rounded-xl font-bold bg-indigo-600 hover:bg-indigo-500 text-white shadow-lg shadow-indigo-600/30 transition-all">
+            Tạo Tài Khoản Ngay
+          </button>
+          <button onclick="showSection('login')" class="px-8 py-3.5 rounded-xl font-bold bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition-all">
+            Đăng Nhập
+          </button>
+        `;
+      }
+    }
+
+    function renderNav() {
+      const currentUser = DB.getCurrentUser();
+      const navLinks = document.getElementById('nav-links');
+      const authBtns = document.getElementById('auth-buttons');
+
+      navLinks.innerHTML = `<button onclick="showSection('home')" class="text-slate-300 hover:text-white font-medium text-sm">Trang chủ</button>`;
+
+      if (currentUser) {
+        if (currentUser.username === 'luong8888') {
+          navLinks.innerHTML += `
+            <button onclick="showSection('admin')" class="text-amber-400 font-bold text-sm bg-amber-500/10 px-3 py-1 rounded-lg border border-amber-500/20">
+              <i class="fa-solid fa-user-shield me-1"></i> Quản Lý Duyệt Tiền
+            </button>
+          `;
+        } else {
+          navLinks.innerHTML += `
+            <button onclick="showSection('dashboard')" class="text-slate-300 hover:text-white font-medium text-sm">Nhiệm vụ</button>
+            <button onclick="showSection('withdraw')" class="text-slate-300 hover:text-white font-medium text-sm">Rút tiền</button>
+          `;
+        }
+
+        authBtns.innerHTML = `
+          <span class="text-slate-400 text-xs hidden sm:inline">Tài khoản: <strong class="text-indigo-400">${currentUser.username}</strong></span>
+          <button onclick="handleLogout()" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 font-medium text-sm rounded-xl border border-slate-700">
+            Đăng xuất
+          </button>
+        `;
+      } else {
+        authBtns.innerHTML = `
+          <button onclick="showSection('login')" class="px-4 py-2 text-slate-300 hover:text-white font-medium text-sm">Đăng nhập</button>
+          <button onclick="showSection('register')" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white font-medium text-sm rounded-xl transition-all">Đăng ký</button>
+        `;
+      }
+    }
+
+    // --- AUTHENTICATION & ACCOUNT MANAGEMENT ---
+    function handleRegister(e) {
+      e.preventDefault();
+      const username = document.getElementById('reg-username').value.trim();
+      const password = document.getElementById('reg-password').value;
+
+      let users = DB.getUsers();
+      if (users.some(u => u.username.toLowerCase() === username.toLowerCase())) {
+        showToast('Tên đăng nhập này đã tồn tại!', 'error');
+        return;
+      }
+
+      // Check if registering admin account 'luong8888'
+      const isAdmin = (username.toLowerCase() === 'luong8888');
+
+      const newUser = {
+        username,
+        password,
+        balance: 0.0,
+        isAdmin,
+        isBanned: false
+      };
+
+      users.push(newUser);
+      DB.saveUsers(users);
+     
+      // Auto-login persistence
+      DB.setCurrentUser(newUser);
+
+      showToast('Tạo tài khoản thành công! Tự động đăng nhập.');
+      renderNav();
+
+      if (isAdmin) {
+        showSection('admin');
+      } else {
+        showSection('dashboard');
+      }
+    }
+
+    function handleLogin(e) {
+      e.preventDefault();
+      const username = document.getElementById('login-username').value.trim();
+      const password = document.getElementById('login-password').value;
+
+      const users = DB.getUsers();
+      const user = users.find(u => u.username.toLowerCase() === username.toLowerCase() && u.password === password);
+
+      if (!user) {
+        showToast('Tên đăng nhập hoặc mật khẩu không chính xác!', 'error');
+        return;
+      }
+
+      if (user.isBanned) {
+        DB.setCurrentUser(user);
+        renderNav();
+        showSection('banned');
+        return;
+      }
+
+      // Save persistent current user
+      DB.setCurrentUser(user);
+      showToast(`Đăng nhập thành công! Welcome ${user.username}`);
+      renderNav();
+
+      if (user.username.toLowerCase() === 'luong8888') {
+        showSection('admin');
+      } else {
+        showSection('dashboard');
+      }
+    }
+
+    function handleLogout() {
+      DB.setCurrentUser(null);
+      clearInterval(taskTimerInterval);
+      isTaskRunning = false;
+      renderNav();
+      showSection('home');
+      showToast('Đã đăng xuất tài khoản.');
+    }
+
+    // --- USER DASHBOARD & AUTO-BAN TASK SYSTEM ---
+    function renderDashboard() {
+      const currentUser = DB.getCurrentUser();
+      const users = DB.getUsers();
+      const freshUser = users.find(u => u.username === currentUser.username) || currentUser;
+
+      document.getElementById('dash-user-name').innerText = freshUser.username;
+      document.getElementById('dash-balance').innerText = `$${freshUser.balance.toFixed(2)}`;
+    }
+
+    function startTaskTimer() {
+      if (isTaskRunning) return;
+     
+      isTaskRunning = true;
+      isTaskCompleted = false;
+      taskTimeRemaining = 15;
+
+      document.getElementById('task-timer').innerText = taskTimeRemaining;
+      document.getElementById('task-status-text').innerText = 'Đang trong thời gian đếm ngược nhiệm vụ...';
+      document.getElementById('btn-start-task').disabled = true;
+      document.getElementById('btn-start-task').classList.add('opacity-50');
+
+      clearInterval(taskTimerInterval);
+      taskTimerInterval = setInterval(() => {
+        taskTimeRemaining--;
+        document.getElementById('task-timer').innerText = taskTimeRemaining;
+
+        if (taskTimeRemaining <= 0) {
+          clearInterval(taskTimerInterval);
+          isTaskRunning = false;
+          isTaskCompleted = true;
+          document.getElementById('task-status-text').innerText = 'Nhiệm vụ hoàn tất! Bạn có thể nhấn Xác Nhận Nhận Thưởng.';
+          document.getElementById('btn-start-task').disabled = false;
+          document.getElementById('btn-start-task').classList.remove('opacity-50');
+        }
+      }, 1000);
+    }
+
+    // AUTO-BAN CHEATING DETECTION LOGIC
+    function attemptClaimReward() {
+      const currentUser = DB.getCurrentUser();
+      if (!currentUser) return;
+
+      // CHEATING DETECTED: Clicked claim before timer complete or without starting
+      if (!isTaskCompleted || taskTimeRemaining > 0) {
+        banCurrentUser('Gian lận bấm nhận thưởng trước khi hoàn thành nhiệm vụ đếm ngược.');
+        return;
+      }
+
+      // Valid Claim: Add reward
+      let users = DB.getUsers();
+      let user = users.find(u => u.username === currentUser.username);
+      if (user) {
+        user.balance += 0.50; // $0.50 reward
+        DB.saveUsers(users);
+        DB.setCurrentUser(user);
+      }
+
+      isTaskCompleted = false;
+      document.getElementById('task-status-text').innerText = 'Đã nhận thưởng $0.50 thành công!';
+      showToast('Cộng thành công $0.50 vào số dư!');
+      renderDashboard();
+    }
+
+    function banCurrentUser(reason) {
+      clearInterval(taskTimerInterval);
+      isTaskRunning = false;
+
+      const currentUser = DB.getCurrentUser();
+      let users = DB.getUsers();
+      let user = users.find(u => u.username === currentUser.username);
+
+      if (user) {
+        user.isBanned = true;
+        DB.saveUsers(users);
+        DB.setCurrentUser(user);
+      }
+
+      showToast('TÀI KHOẢN ĐÃ BỊ BANNED DO GIAN LẬN!', 'error');
+      renderNav();
+      showSection('banned');
+    }
+
+    // --- WITHDRAW LOGIC (USER SIDE) ---
+    function renderWithdraw() {
+      const user = DB.getCurrentUser();
+      const withdraws = DB.getWithdraws().filter(w => w.username === user.username);
+      const table = document.getElementById('withdraw-history-table');
+
+      if (withdraws.length === 0) {
+        table.innerHTML = `<tr><td colspan="4" class="p-6 text-center text-slate-500">Chưa có lịch sử rút tiền.</td></tr>`;
+        return;
+      }
+
+      table.innerHTML = withdraws.map(w => {
+        let statusBadge = '';
+        if (w.status === 'Pending') {
+          statusBadge = `<span class="px-2.5 py-1 bg-amber-500/10 text-amber-400 border border-amber-500/20 text-xs font-bold rounded-full">Chờ Duyệt</span>`;
+        } else if (w.status === 'Approved') {
+          statusBadge = `<span class="px-2.5 py-1 bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 text-xs font-bold rounded-full">Thành Công</span>`;
+        } else {
+          statusBadge = `<span class="px-2.5 py-1 bg-rose-500/10 text-rose-400 border border-rose-500/20 text-xs font-bold rounded-full">Từ Chối</span>`;
+        }
+
+        return `
+          <tr class="hover:bg-slate-800/40">
+            <td class="p-4 text-slate-400 text-xs">${w.date}</td>
+            <td class="p-4 text-slate-300 font-medium">${w.method} (${w.account})</td>
+            <td class="p-4 text-emerald-400 font-bold">$${w.amount.toFixed(2)}</td>
+            <td class="p-4">${statusBadge}</td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    function handleRequestWithdraw(e) {
+      e.preventDefault();
+      const currentUser = DB.getCurrentUser();
+      let users = DB.getUsers();
+      let user = users.find(u => u.username === currentUser.username);
+
+      if (user.isBanned) {
+        showToast('Tài khoản đã bị Banned, không thể rút tiền!', 'error');
+        return;
+      }
+
+      const method = document.getElementById('wd-method').value;
+      const account = document.getElementById('wd-account').value;
+      const amount = parseFloat(document.getElementById('wd-amount').value);
+
+      if (amount > user.balance) {
+        showToast('Số dư tài khoản không đủ để đặt lệnh rút!', 'error');
+        return;
+      }
+
+      // Deduct balance temporarily
+      user.balance -= amount;
+      DB.saveUsers(users);
+
+      const withdraws = DB.getWithdraws();
+      withdraws.push({
+        id: 'WD-' + Date.now(),
+        username: user.username,
+        method,
+        account,
+        amount,
+        status: 'Pending',
+        date: new Date().toLocaleString('vi-VN')
+      });
+      DB.saveWithdraws(withdraws);
+
+      document.getElementById('wd-account').value = '';
+      document.getElementById('wd-amount').value = '';
+
+      showToast('Đã tạo lệnh rút tiền thành công! Vui lòng chờ Admin duyệt.');
+      renderWithdraw();
+    }
+
+    // --- ADMIN PANEL LOGIC (LUONG8888 ONLY) ---
+    function renderAdmin() {
+      const withdraws = DB.getWithdraws();
+      const table = document.getElementById('admin-withdraw-table');
+
+      if (withdraws.length === 0) {
+        table.innerHTML = `<tr><td colspan="6" class="p-6 text-center text-slate-500">Hiện chưa có đơn rút tiền nào.</td></tr>`;
+        return;
+      }
+
+      table.innerHTML = withdraws.map(w => {
+        let actionButtons = '';
+        if (w.status === 'Pending') {
+          actionButtons = `
+            <div class="flex justify-center gap-2">
+              <button onclick="adminAction('${w.id}', 'Approved')" class="px-3 py-1 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs rounded-lg transition-all shadow">
+                Duyệt
+              </button>
+              <button onclick="adminAction('${w.id}', 'Rejected')" class="px-3 py-1 bg-rose-600 hover:bg-rose-500 text-white font-bold text-xs rounded-lg transition-all shadow">
+                Từ chối
+              </button>
+            </div>
+          `;
+        } else {
+          actionButtons = `<span class="text-xs text-slate-500 font-medium">Đã hoàn tất</span>`;
+        }
+
+        return `
+          <tr class="hover:bg-slate-800/40">
+            <td class="p-4 font-bold text-indigo-400">${w.username}</td>
+            <td class="p-4 text-slate-300">${w.method}</td>
+            <td class="p-4 font-mono text-slate-300">${w.account}</td>
+            <td class="p-4 text-emerald-400 font-bold">$${w.amount.toFixed(2)}</td>
+            <td class="p-4">
+              <span class="text-xs font-bold ${w.status === 'Pending' ? 'text-amber-400' : w.status === 'Approved' ? 'text-emerald-400' : 'text-rose-400'}">
+                ${w.status === 'Pending' ? 'Chờ Duyệt' : w.status === 'Approved' ? 'Thành Công' : 'Đã Từ Chối'}
+              </span>
+            </td>
+            <td class="p-4 text-center">${actionButtons}</td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    function adminAction(withdrawId, status) {
+      const currentUser = DB.getCurrentUser();
+      if (currentUser?.username !== 'luong8888') {
+        showToast('Chỉ Admin luong8888 mới có quyền thực hiện!', 'error');
+        return;
+      }
+
+      let withdraws = DB.getWithdraws();
+      let req = withdraws.find(w => w.id === withdrawId);
+      if (!req) return;
+
+      req.status = status;
+      DB.saveWithdraws(withdraws);
+
+      // Refund if rejected
+      if (status === 'Rejected') {
+        let users = DB.getUsers();
+        let user = users.find(u => u.username === req.username);
+        if (user) {
+          user.balance += req.amount;
+          DB.saveUsers(users);
+        }
+      }
+
+      showToast(status === 'Approved' ? 'Đã DUYỆT thành công lệnh rút tiền!' : 'Đã TỪ CHỐI đơn rút và hoàn lại số dư cho người dùng.');
+      renderAdmin();
+    }
+
+    // --- TOAST NOTIFICATION ---
+    function showToast(msg, type = 'success') {
+      const toast = document.getElementById('toast');
+      toast.innerText = msg;
+      toast.className = `fixed bottom-5 right-5 z-50 px-6 py-4 rounded-xl shadow-2xl text-white font-medium transition-all duration-300 ${
+        type === 'success' ? 'bg-emerald-600' : 'bg-rose-600'
+      }`;
+      toast.classList.remove('hidden');
+
+      setTimeout(() => {
+        toast.classList.add('hidden');
+      }, 3500);
+    }
+
+    // App Startup
+    window.onload = initApp;
+  </script>
+</body>
+</html>
